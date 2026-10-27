@@ -18,6 +18,8 @@ class _FakeCourses implements CourseRepository {
 }
 
 class _FakeNotes implements NoteRepository {
+  final deleted = <String>[];
+
   @override
   Future<List<Note>> fetchAll() async => [
     for (final (i, id) in ['satu', 'dua', 'tiga'].indexed)
@@ -38,6 +40,9 @@ class _FakeNotes implements NoteRepository {
       n.copyWith(updatedAt: DateTime(2026, 10, 28));
 
   @override
+  Future<void> delete(String id) async => deleted.add(id);
+
+  @override
   dynamic noSuchMethod(Invocation i) => super.noSuchMethod(i);
 }
 
@@ -45,17 +50,25 @@ void main() {
   setUpAll(() => initializeDateFormatting('id_ID'));
 
   late NoteProvider provider;
+  late _FakeNotes repo;
 
   Future<void> pumpDetail(WidgetTester tester, String id) async {
-    provider = NoteProvider(_FakeNotes(), CourseProvider(_FakeCourses()));
+    repo = _FakeNotes();
+    provider = NoteProvider(repo, CourseProvider(_FakeCourses()));
     await provider.load();
     final router = GoRouter(
       initialLocation: '/notes/$id',
       routes: [
         GoRoute(
-          path: '/notes/:id',
-          builder: (_, state) =>
-              NoteDetailPage(id: state.pathParameters['id']!),
+          path: '/notes',
+          builder: (_, _) => const Scaffold(body: Text('Daftar')),
+          routes: [
+            GoRoute(
+              path: ':id',
+              builder: (_, state) =>
+                  NoteDetailPage(id: state.pathParameters['id']!),
+            ),
+          ],
         ),
       ],
     );
@@ -124,5 +137,39 @@ void main() {
     expect(provider.items.first.id, 'tiga');
     expect(find.text('Catatan tiga (revisi)'), findsOneWidget);
     expect(find.text('Catatan 3 dari 3'), findsOneWidget);
+  });
+
+  testWidgets('delete removes the note on screen, not the one opened', (
+    tester,
+  ) async {
+    await pumpDetail(tester, 'dua');
+    await tester.tap(find.byTooltip('Catatan berikutnya'));
+    await tester.pumpAndSettle();
+    expect(find.text('Catatan tiga'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Hapus catatan'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Hapus'));
+    await tester.pumpAndSettle();
+
+    expect(repo.deleted, ['tiga']);
+    expect(provider.byId('tiga'), isNull);
+    // Deep-linked detail has nothing to pop, so it goes to the list.
+    expect(find.text('Daftar'), findsOneWidget);
+  });
+
+  testWidgets('cancelling delete keeps the note (TC-13 style)', (
+    tester,
+  ) async {
+    await pumpDetail(tester, 'dua');
+    await tester.tap(find.byTooltip('Hapus catatan'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Batal'));
+    await tester.pumpAndSettle();
+
+    expect(repo.deleted, isEmpty);
+    expect(provider.byId('dua'), isNotNull);
+    expect(find.text('Catatan dua'), findsOneWidget);
+    expect(find.text('Daftar'), findsNothing);
   });
 }
