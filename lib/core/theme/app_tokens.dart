@@ -28,4 +28,7 @@ class AppMotion {
 class AppLayout {
   static const double formMaxWidth = 560;
   static const double listMaxWidth = 720;
+
+  /// Card grids get more room so wide screens fit 3–4 columns.
+  static const double gridMaxWidth = 1200;
 }
