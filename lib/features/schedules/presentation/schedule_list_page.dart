@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/page_messages.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/error_view.dart';
+import '../../../core/widgets/fill_scroll.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/skeleton_list.dart';
 import '../../courses/providers/course_provider.dart';
@@ -86,12 +88,12 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
   Widget _body(ScheduleProvider provider) {
     if (provider.loading && !provider.hasLoaded) return const SkeletonList();
     if (provider.error != null && !provider.hasLoaded) {
-      return _FillScroll(
+      return FillScroll(
         child: ErrorView(message: provider.error!, onRetry: provider.load),
       );
     }
     if (provider.items.isEmpty) {
-      return _FillScroll(
+      return FillScroll(
         child: EmptyState(
           icon: Icons.calendar_month_outlined,
           title: 'Belum ada jadwal',
@@ -105,7 +107,7 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
     final groups = provider.grouped;
     if (groups.isEmpty) {
       final day = DateFormatter.dayName(provider.dayFilter!);
-      return _FillScroll(
+      return FillScroll(
         child: EmptyState(
           icon: Icons.event_available_outlined,
           title: 'Tidak ada kuliah hari $day',
@@ -158,26 +160,6 @@ class _ScheduleListPageState extends State<ScheduleListPage> {
               ),
             ],
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Lets a non-list child fill the viewport and still support pull-to-refresh.
-class _FillScroll extends StatelessWidget {
-  const _FillScroll({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (_, constraints) => SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: child,
         ),
       ),
     );
