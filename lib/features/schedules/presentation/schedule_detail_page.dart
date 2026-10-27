@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/utils/date_formatter.dart';
+import '../../../core/utils/page_messages.dart';
 import '../../../core/widgets/back_or_home.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/info_row.dart';
 import '../../../core/widgets/loading_view.dart';
 import '../data/schedule.dart';
 import '../providers/schedule_provider.dart';
@@ -94,25 +96,25 @@ class _ScheduleDetailPageState extends State<ScheduleDetailPage> {
               ),
               child: Column(
                 children: [
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.calendar_today_outlined,
                     label: 'Hari',
                     value: DateFormatter.dayName(s.dayOfWeek),
                   ),
                   const Divider(indent: 56),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.schedule,
                     label: 'Jam',
                     value: s.timeRange,
                   ),
                   const Divider(indent: 56),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.meeting_room_outlined,
                     label: 'Ruangan',
                     value: s.room,
                   ),
                   const Divider(indent: 56),
-                  _InfoRow(
+                  InfoRow(
                     icon: Icons.person_outline,
                     label: 'Dosen',
                     value: s.lecturer,
@@ -157,31 +159,6 @@ class _ScheduleDetailPageState extends State<ScheduleDetailPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.label, required this.value});
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
-    return ListTile(
-      leading: Icon(icon, color: scheme.onSurfaceVariant),
-      title: Text(
-        label,
-        style: text.labelMedium?.copyWith(color: scheme.onSurfaceVariant),
-      ),
-      subtitle: Text(
-        value,
-        style: text.bodyLarge?.copyWith(color: scheme.onSurface),
       ),
     );
   }

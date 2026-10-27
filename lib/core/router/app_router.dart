@@ -13,6 +13,8 @@ import '../../features/notes/presentation/note_list_page.dart';
 import '../../features/schedules/presentation/schedule_detail_page.dart';
 import '../../features/schedules/presentation/schedule_form_page.dart';
 import '../../features/schedules/presentation/schedule_list_page.dart';
+import '../../features/tasks/presentation/task_detail_page.dart';
+import '../../features/tasks/presentation/task_form_page.dart';
 import '../../features/tasks/presentation/task_list_page.dart';
 import '../widgets/placeholder_page.dart';
 import 'app_shell.dart';
@@ -101,7 +103,13 @@ GoRouter createRouter(AuthRepository auth) {
         routes: [
           GoRoute(path: '/', builder: (_, _) => const DashboardPage()),
           GoRoute(path: '/profile', builder: (_, _) => const ProfilePage()),
-          _crudRoute('/tasks', 'Tugas', () => const TaskListPage()),
+          _crudRoute(
+            '/tasks',
+            'Tugas',
+            () => const TaskListPage(),
+            form: (state) => TaskFormPage(id: state.pathParameters['id']),
+            detail: (state) => TaskDetailPage(id: state.pathParameters['id']!),
+          ),
           _crudRoute(
             '/schedules',
             'Jadwal',

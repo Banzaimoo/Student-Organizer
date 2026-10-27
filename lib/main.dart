@@ -13,6 +13,8 @@ import 'features/courses/data/course_repository.dart';
 import 'features/courses/providers/course_provider.dart';
 import 'features/schedules/data/schedule_repository.dart';
 import 'features/schedules/providers/schedule_provider.dart';
+import 'features/tasks/data/task_repository.dart';
+import 'features/tasks/providers/task_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,12 +39,14 @@ Future<void> main() async {
   final authRepo = AuthRepository();
   final courses = CourseProvider(CourseRepository());
   final schedules = ScheduleProvider(ScheduleRepository(), courses);
+  final tasks = TaskProvider(TaskRepository(), courses);
 
   // Drop cached rows on logout so the next account never sees them.
   authRepo.authChanges.listen((state) {
     if (state.event == AuthChangeEvent.signedOut) {
       courses.clear();
       schedules.clear();
+      tasks.clear();
     }
   });
 
@@ -52,6 +56,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepo)),
         ChangeNotifierProvider.value(value: courses),
         ChangeNotifierProvider.value(value: schedules),
+        ChangeNotifierProvider.value(value: tasks),
       ],
       child: App(router: createRouter(authRepo)),
     ),
