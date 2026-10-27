@@ -37,6 +37,10 @@ class AppShell extends StatelessWidget {
     final index = _selectedIndex(location);
     void onSelect(int i) => context.go(_destinations[i].path);
 
+    // Own messenger so a page's SnackBars render in that page's Scaffold
+    // (above its FAB) rather than in this outer navigation Scaffold.
+    final content = ScaffoldMessenger(child: child);
+
     final wide = MediaQuery.sizeOf(context).width >= 840;
     if (wide) {
       return Scaffold(
@@ -52,13 +56,13 @@ class AppShell extends StatelessWidget {
               ],
             ),
             const VerticalDivider(width: 1),
-            Expanded(child: child),
+            Expanded(child: content),
           ],
         ),
       );
     }
     return Scaffold(
-      body: child,
+      body: content,
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: onSelect,

@@ -14,6 +14,8 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       title: 'Student Organizer',
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       routerConfig: router,
       locale: const Locale('id', 'ID'),
       supportedLocales: const [Locale('id', 'ID')],

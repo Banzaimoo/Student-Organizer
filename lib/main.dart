@@ -9,6 +9,10 @@ import 'core/config/supabase_config.dart';
 import 'core/router/app_router.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/courses/data/course_repository.dart';
+import 'features/courses/providers/course_provider.dart';
+import 'features/schedules/data/schedule_repository.dart';
+import 'features/schedules/providers/schedule_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,10 +35,23 @@ Future<void> main() async {
   );
 
   final authRepo = AuthRepository();
+  final courses = CourseProvider(CourseRepository());
+  final schedules = ScheduleProvider(ScheduleRepository(), courses);
+
+  // Drop cached rows on logout so the next account never sees them.
+  authRepo.authChanges.listen((state) {
+    if (state.event == AuthChangeEvent.signedOut) {
+      courses.clear();
+      schedules.clear();
+    }
+  });
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepo)),
+        ChangeNotifierProvider.value(value: courses),
+        ChangeNotifierProvider.value(value: schedules),
       ],
       child: App(router: createRouter(authRepo)),
     ),

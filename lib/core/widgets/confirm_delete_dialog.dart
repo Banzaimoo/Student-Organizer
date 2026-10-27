@@ -9,7 +9,15 @@ Future<bool> confirmDelete(BuildContext context, {String itemName = 'data ini'})
       content: Text('Yakin ingin menghapus $itemName? Tindakan ini tidak dapat dibatalkan.'),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Batal')),
-        FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Hapus')),
+        // Destructive action reads as destructive, not as the primary accent.
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(ctx).colorScheme.error,
+            foregroundColor: Theme.of(ctx).colorScheme.onError,
+          ),
+          onPressed: () => Navigator.pop(ctx, true),
+          child: const Text('Hapus'),
+        ),
       ],
     ),
   );
