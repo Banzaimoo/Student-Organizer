@@ -69,7 +69,7 @@ Tidak ada backend kustom; aplikasi berkomunikasi langsung dengan Supabase melalu
 | `flutter_dotenv` *(opsional)* | Menyimpan URL & anon key di `.env` |
 
 ### 3.2 Struktur Folder (feature-first)
-Dirancang agar 4 anggota bisa bekerja paralel dengan konflik minimal — setiap orang bekerja di folder fiturnya sendiri.
+Dikerjakan oleh satu developer (Mifzal). Struktur feature-first dipilih agar setiap fitur berdiri sendiri dan dapat dikerjakan tuntas satu per satu.
 
 ```
 lib/
@@ -86,10 +86,10 @@ lib/
 │   ├── auth/        (login, register, profile)
 │   ├── dashboard/
 │   ├── courses/     (repository mata kuliah — dipakai dropdown)
-│   ├── tasks/       ← Novita
-│   ├── schedules/   ← Alifah
-│   ├── notes/       ← Mifzal
-│   └── activities/  ← Audy
+│   ├── tasks/       ← Fitur 1
+│   ├── schedules/   ← Fitur 2
+│   ├── notes/       ← Fitur 3
+│   └── activities/  ← Fitur 4
 │       ├── data/
 │       │   ├── models/<entity>.dart          # fromJson / toJson
 │       │   └── <entity>_repository.dart      # query Supabase
@@ -173,7 +173,7 @@ Prioritas: **M** = Must, **S** = Should, **C** = Could.
 | FR-CRS-02 | Dropdown mata kuliah pada form Tugas dan Catatan mengambil data dari `courses` milik pengguna. | M |
 | FR-CRS-03 | Dropdown menyediakan opsi "+ Tambah mata kuliah baru" untuk mengisi nama secara manual bila belum ada jadwal. | S |
 
-### 4.4 Fitur 1 — Task Management (FR-TASK) · PJ: Novita
+### 4.4 Fitur 1 — Task Management (FR-TASK)
 | ID | Kebutuhan | Prioritas |
 |---|---|---|
 | FR-TASK-01 | **Read:** Menampilkan daftar tugas dengan `ListView`; tiap card berisi nama tugas, mata kuliah, deadline, dan status (chip berwarna). | M |
@@ -186,7 +186,7 @@ Prioritas: **M** = Must, **S** = Should, **C** = Could.
 | FR-TASK-08 | **Delete:** Hapus dari card atau detail setelah dialog konfirmasi. | M |
 | FR-TASK-09 | Validasi: nama tugas, mata kuliah, deadline, status wajib diisi. | M |
 
-### 4.5 Fitur 2 — Jadwal Kuliah (FR-SCH) · PJ: Alifah
+### 4.5 Fitur 2 — Jadwal Kuliah (FR-SCH)
 | ID | Kebutuhan | Prioritas |
 |---|---|---|
 | FR-SCH-01 | **Read:** Menampilkan daftar jadwal dengan `ListView`; card berisi nama mata kuliah, hari, jam mulai–selesai, ruangan, dosen. | M |
@@ -199,7 +199,7 @@ Prioritas: **M** = Must, **S** = Should, **C** = Could.
 | FR-SCH-08 | Validasi: semua field wajib; **jam selesai harus lebih besar dari jam mulai**. | M |
 | FR-SCH-09 | Peringatan (bukan blokir) jika jadwal bentrok dengan jadwal lain di hari yang sama. | C |
 
-### 4.6 Fitur 3 — Catatan (FR-NOTE) · PJ: Mifzal
+### 4.6 Fitur 3 — Catatan (FR-NOTE)
 | ID | Kebutuhan | Prioritas |
 |---|---|---|
 | FR-NOTE-01 | **Read:** Menampilkan daftar catatan dengan `GridView` (2 kolom di HP, 3–4 di layar lebar) dengan opsi beralih ke `ListView`. | M |
@@ -213,7 +213,7 @@ Prioritas: **M** = Must, **S** = Should, **C** = Could.
 | FR-NOTE-09 | **Delete:** Dengan dialog konfirmasi. | M |
 | FR-NOTE-10 | Validasi: judul, mata kuliah, tanggal, isi wajib diisi. | M |
 
-### 4.7 Fitur 4 — Kegiatan Mahasiswa (FR-ACT) · PJ: Audy
+### 4.7 Fitur 4 — Kegiatan Mahasiswa (FR-ACT)
 | ID | Kebutuhan | Prioritas |
 |---|---|---|
 | FR-ACT-01 | **Read:** Menampilkan daftar kegiatan dengan `ListView`; card berisi nama kegiatan, tanggal, waktu, lokasi, penyelenggara. | M |
@@ -505,22 +505,26 @@ create policy "own rows" on public.activities for all using (user_id = auth.uid(
 | TC-15 | Matikan internet lalu buka daftar | Pesan error + tombol Coba lagi; tidak crash. |
 | TC-16 | Jalankan di Android & Web | Semua TC di atas lulus di kedua platform. |
 
-## 9. Rencana Implementasi & Pembagian Kerja
+## 9. Rencana Implementasi
 
-| Tahap | Pekerjaan | PJ |
+Proyek dikerjakan oleh **satu developer (Mifzal)**. Pengerjaan dilakukan **per fitur secara vertikal**: setiap fitur diselesaikan penuh (model → repository → provider → daftar → form → detail → uji) sebelum berpindah ke fitur berikutnya. Setiap fitur berstatus *selesai* hanya jika seluruh kebutuhan **M** miliknya terpenuhi dan test case terkait lulus.
+
+| Tahap | Pekerjaan | Keluaran / Kriteria selesai |
 |---|---|---|
-| 0. Fondasi | `flutter create`, setup Supabase project + SQL §5.3, `main.dart`, tema, router, auth, shell navigasi, widget umum (`core/`) | Ketua + semua (pair) |
-| 1. Model & Repository | Model + repository per fitur | Masing-masing |
-| 2. Halaman Daftar | List/Grid + card + empty/loading/error state | Masing-masing |
-| 3. Form Tambah/Edit | Validasi + simpan ke Supabase | Masing-masing |
-| 4. Halaman Detail | Detail + Edit/Hapus (+ PageView) | Masing-masing |
-| 5. Integrasi | Dashboard menarik data 4 fitur; dropdown mata kuliah; profil | Ketua + semua |
-| 6. Uji & Rilis | Jalankan TC-01…16 di Android & Web; build APK & web | Semua |
+| 0. Fondasi | `flutter create`, setup Supabase project + SQL §5.3, `main.dart`, tema, router, auth (login/register/profil), shell navigasi, widget umum (`core/`) | Login/register/logout berjalan; TC-01 s.d. TC-03 lulus |
+| 1. Fitur 2 — Jadwal Kuliah | Model + repository → halaman daftar (+ filter hari) → form tambah/edit (validasi jam) → detail + hapus; repository `courses` dan upsert mata kuliah (FR-CRS-01) | FR-SCH & FR-CRS-01 terpenuhi; TC-07, TC-08, TC-09 lulus |
+| 2. Fitur 1 — Task Management | Model + repository → daftar → form (dropdown mata kuliah, FR-CRS-02/03) → detail + hapus | FR-TASK terpenuhi; TC-04, TC-05, TC-06 lulus |
+| 3. Fitur 3 — Catatan | Model + repository → Grid/List → form → detail dengan `PageView` + hapus | FR-NOTE terpenuhi; TC-10, TC-11 lulus |
+| 4. Fitur 4 — Kegiatan Mahasiswa | Model + repository → daftar → form (validasi waktu) → detail + hapus | FR-ACT terpenuhi; TC-12, TC-13 lulus |
+| 5. Integrasi | Dashboard menarik data 4 fitur; penyempurnaan profil; perapian UI/responsif | FR-DASH terpenuhi |
+| 6. Uji & Rilis | Jalankan TC-01…16 di Android & Web; build APK & web | TC-14, TC-15, TC-16 lulus; artefak rilis |
 
-**Konvensi kolaborasi (Git):**
-- Branch per fitur: `feat/tasks`, `feat/schedules`, `feat/notes`, `feat/activities`.
-- File di `core/` dan `app_router.dart` hanya diubah lewat Pull Request yang di-review anggota lain.
-- Satu project Supabase dipakai bersama; perubahan skema ditulis sebagai file SQL di `supabase/migrations/` agar tercatat.
+**Alasan urutan fitur:** Jadwal dikerjakan lebih dulu karena menjadi sumber data `courses` yang dipakai dropdown pada Tugas dan Catatan (FR-CRS-01). Dashboard dikerjakan setelah keempat fitur karena bergantung pada datanya.
+
+**Konvensi pengembangan (Git):**
+- Satu branch per tahap/fitur: `feat/foundation`, `feat/schedules`, `feat/tasks`, `feat/notes`, `feat/activities`, `feat/dashboard`; digabung ke `main` setelah fitur selesai dan `flutter analyze` bersih.
+- Perubahan di `core/` dan `app_router.dart` dilakukan langsung oleh developer; pastikan seluruh fitur yang sudah ada tetap berjalan sebelum digabung.
+- Perubahan skema ditulis sebagai file SQL di `supabase/migrations/` agar tercatat.
 
 ## 10. Lampiran — Pemetaan Proposal → SRS
 

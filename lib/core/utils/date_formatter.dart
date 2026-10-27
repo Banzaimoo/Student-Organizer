@@ -43,6 +43,13 @@ class DateFormatter {
   static String toDbTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}:00';
 
+  /// Formats for Postgres `date` columns: `2026-10-26`. Uses the local
+  /// calendar day; converting to UTC first could move it a day back.
+  static String toDbDate(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}-'
+      '${d.day.toString().padLeft(2, '0')}';
+
   static const dayNames = [
     'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu',
   ];

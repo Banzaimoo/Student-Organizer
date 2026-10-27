@@ -9,6 +9,8 @@ import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/profile_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/notes/presentation/note_detail_page.dart';
+import '../../features/notes/presentation/note_form_page.dart';
 import '../../features/notes/presentation/note_list_page.dart';
 import '../../features/schedules/presentation/schedule_detail_page.dart';
 import '../../features/schedules/presentation/schedule_form_page.dart';
@@ -121,7 +123,13 @@ GoRouter createRouter(AuthRepository auth) {
             detail: (state) =>
                 ScheduleDetailPage(id: state.pathParameters['id']!),
           ),
-          _crudRoute('/notes', 'Catatan', () => const NoteListPage()),
+          _crudRoute(
+            '/notes',
+            'Catatan',
+            () => const NoteListPage(),
+            form: (state) => NoteFormPage(id: state.pathParameters['id']),
+            detail: (state) => NoteDetailPage(id: state.pathParameters['id']!),
+          ),
           _crudRoute('/activities', 'Kegiatan', () => const ActivityListPage()),
         ],
       ),
